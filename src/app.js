@@ -1,19 +1,31 @@
 const express = require('express');
 
 const app = express();
-app.use("/about",(req,res)=>{
-    res.send("This is about route handler");
-})
-app.use("/about/contact",(req,res)=>{
-    res.send("This is contact route handler");
-}       )
-// app.use("/",(req,res)=>{
-//     console.log("This is my first request");
-//     res.send("Hello World")
-// })
-app.get("/user",(req,res)=>{
-    res.send("This is user route handler")
-})
+
+// now we will work on the middleware
+
+app.use("/",(req,res,next)=>{
+    console.log("1st route handler")
+    //res.send("Hello From the server")
+    next();
+
+},(req,res,next)=>{
+    console.log("This is 2nd route handler")
+    //res.send("2nd router")
+    next();
+
+},
+(req,res,next)=>{
+    console.log("This is 3rd route handler")
+    // res.send("3rd router")}
+    next();
+},
+
+(req,res,next)=>{
+    console.log("This is 4th route handler")
+    res.send("4th router handler")}
+    
+)
 
 
 
