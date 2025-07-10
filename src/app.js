@@ -1,38 +1,38 @@
 const express = require('express');
+
 const { adminauth, userauth } = require('./middleware/auth');
+
+const  connectDB =require("./config/database");
+
+const User = require('./models/user')
 
 const app = express();
 
-// now we will work on the middleware
+app.post("/signup",async(req,res)=>{
+    const userobj = {
+        firstname:"Virat",
+        lastname:"Kohli",
+        emailid:"virate2004@gmail.com",
+        password:"shubham123",
+        age:21,
+        gender:"Male"
+    }
+    //creating a new instance of the User model and passing the user object
+    const user = new User(userobj);
+    await user.save();
 
-//why we need a middleware is to check if the user is authenticated or not or to handle the requests
-// handle auth middleware for all GET POST PUT DELETE requests
-app.use("/admin",adminauth)
-app.use("/user",userauth)
+    res.send("User Added Successfully")
 
-app.get("/admin/getalldata",(req,res)=>{
-    //check if request is authentication
-    //logic of checking if the user is authenticated
-    res.send("All data send")
-    
-   
-})
-app.get("/user/getalldata",(req,res)=>{
-    //check if request is authentication
-    //logic of checking if the use ris authenticated
-    res.send("All data send")
-    
-   
-})
-app.get("/admin/deleteuser",(req,res)=>{
-    
-    res.send("delete the user")
 })
 
 
-
-
-
-app.listen(3000,()=>{
+connectDB().then(()=>{
+    console.log("Connection established with mongodb")
+    app.listen(3000,()=>{
     console.log("Server is Listening at port 3000")
 })
+}).catch((err)=>{
+    console.error("Database cannot be connected")
+})
+
+
