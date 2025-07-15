@@ -9,23 +9,18 @@ const User = require('./models/user')
 const app = express();
 app.use(express.json())
 
-app.post("/signup",async(req,res)=>{
+app.post("/signup", async (req, res) => {
     const userobj = req.body;
     const user = new User(userobj);
-    //creating a new instance of the User model and passing the user object
+
     try {
-        
         await user.save();
-
-        res.send("User Added Successfully")
-        
+        res.status(200).send("User Added Successfully");
     } catch (error) {
-        console.error(err);
-        res.status(400).send("Error while creating user")
-        
+        console.error("Signup Error:", error); // <-- log the actual issue
+        res.status(400).send("Error while creating user");
     }
-
-})
+});
 
 //get user by email id
 app.get("/user",async(req,res)=>{
@@ -76,10 +71,12 @@ app.patch("/update",async(req,res)=>{
     const data = req.body;
     try {
 
-        const user = await User.findByIdAndUpdate({_id:userid},data)
+        const user = await User.findByIdAndUpdate({_id:userid},data,{runValidators:true})
+        //runvalidators:true will allow us to make the changes in the existing document means it allows the validator function to be run
         res.send("User Updated Successfully")
         
     } catch (error) {
+        console.error("Signup Error:", error);
         res.status(400).send("User not found or cannot be updated")
     }
 
