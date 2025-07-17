@@ -12,6 +12,7 @@ app.use(express.json())
 app.post("/signup", async (req, res) => {
     const userobj = req.body;
     const user = new User(userobj);
+    
 
     try {
         await user.save();
@@ -69,7 +70,15 @@ app.patch("/update",async(req,res)=>{
 
     const userid = req.body.userid;
     const data = req.body;
+    
     try {
+        const ALLOWED_UPDATES = ["userid","photoUrl","about","gender","age","skills"]
+
+        const isupdatedallowed = Object.keys(data).every(k=>ALLOWED_UPDATES.includes(k))
+    
+        if (!isupdatedallowed){
+        throw new Error("Update Not allowed")
+        }
 
         const user = await User.findByIdAndUpdate({_id:userid},data,{runValidators:true})
         //runvalidators:true will allow us to make the changes in the existing document means it allows the validator function to be run

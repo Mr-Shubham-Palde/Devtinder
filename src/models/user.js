@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require("validator")
 
 const userSchema = new mongoose.Schema({
     firstname:{type:String,required:true,
@@ -17,12 +18,23 @@ const userSchema = new mongoose.Schema({
         lowercase:true,
         required:true,
         unique:true,// what it will do is it will not allow the duplicate emails into the db,
-        trim:true // it will remove the spaces from the start and end of the email 
+        trim:true, // it will remove the spaces from the start and end of the email 
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("Please Enter the Valid Email" + value)
+            }
+
+        }
     },
     password:
     {
         type:String,
-        required:true
+        required:true,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("Pleae Enter Strong Password:"+ value)
+            }
+        }
     },
     age:
     {
@@ -46,7 +58,12 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl:{
         type:String,
-         default:"https://t4.ftcdn.net/jpg/07/88/67/21/360_F_788672190_maGwfDtey1ep9BqZsLO9f6LaUkIBMNt1.jpg"// deafult image if user does not provide any image
+         default:"https://t4.ftcdn.net/jpg/07/88/67/21/360_F_788672190_maGwfDtey1ep9BqZsLO9f6LaUkIBMNt1.jpg",// deafult image if user does not provide any image
+         validate(value){
+            if(!validator.isURL(value)){
+                throw new Error("Pleae Enter Strong Password:"+ value)
+            }
+        }
     },
     about:{
         type:String,
