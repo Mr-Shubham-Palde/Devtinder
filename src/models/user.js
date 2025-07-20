@@ -2,14 +2,17 @@ const mongoose = require('mongoose');
 const validator = require("validator")
 
 const userSchema = new mongoose.Schema({
-    firstname:{type:String,required:true,
+    firstname:{type:String,
+        required:true,
         minLength:2,//minimum length of the frst name
-        maxLength:24//maximau length of the first name
+        maxLength:24//maximum length of the first name
     },
 
     lastname:
     {
         type:String,
+        minLength:2,//minimum length of the frst name
+        maxLength:24
         
     },
     emailid:

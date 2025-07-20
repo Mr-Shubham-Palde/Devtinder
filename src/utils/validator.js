@@ -8,7 +8,11 @@ const validateSignUpData = (req)=>{
     else if (!validator.isEmail(emailid)){
         throw new Error("Please Enter a valid Email")
     }
-    else if (!validator.isStrongPassword(emailid)){
+    else if (!validator.isStrongPassword(password)){
         throw new Error("Please Enter a Strong Password")
     }
+}
+
+module.exports = {
+    validateSignUpData,
 }
