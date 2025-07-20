@@ -7,9 +7,14 @@ const connectDB = require("./config/database");
 const User = require('./models/user')
 const { validateSignUpData } = require('./utils/validator')
 const bcrypt = require("bcrypt")
-
+const cookieParser = require("cookie-parser")
+const jwt = require("jsonwebtoken")
 const app = express();
 app.use(express.json())
+app.use(cookieParser())
+
+
+
 
 //Signing up into the system
 app.post("/signup", async (req, res) => {
@@ -44,17 +49,21 @@ app.post("/login",async(req,res)=>{
             return res.status(400).json({ error: "Invalid Credentials" });
         }
 
-        // if(!validator.isEmail(emailid)){
-        //     throw new Error("Please Enter the valid email id")
-        // }
-
         const user = await User.findOne({emailid:emailid})
         if(!user){
             throw new Error("Invalid credentails")
         }
         
         const isPasswordValid = await bcrypt.compare(password,user.password)
+
         if(isPasswordValid){
+
+            //create a JWT token 
+            const token = await jwt.sign({_id:user._id},"DEV@Tinder$2004")
+        
+
+            //Add the token to cookie and send the response back to the user
+            res.cookie("token",token)
             res.send("User Login Successful")
         }
         else{
@@ -66,6 +75,33 @@ app.post("/login",async(req,res)=>{
         res.status(400).send("Error while Login the user");
     }
 })
+
+app.get("/profile", async (req, res) => {
+    try {
+        const { token } = req.cookies;
+
+        if (!token) {
+            return res.status(401).json({ error: "Access Denied. No token provided." });
+        }
+
+        // Validate token
+        const isTokenValide = jwt.verify(token, "DEV@Tinder$2004");
+
+        const { _id } = isTokenValide;
+
+        
+
+        const user = await User.findById(_id);
+        if (!user) {
+            return res.status(404).json({ error: "User does not exist" });
+        }
+
+        res.send(user);
+    } catch (error) {
+        console.error("Profile Error:", error);
+        res.status(400).json({ error: "Invalid Token or Other Error" });
+    }
+});
 
 
 //get user by email id
