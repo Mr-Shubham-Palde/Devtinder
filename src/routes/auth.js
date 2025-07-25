@@ -51,7 +51,7 @@ authRouter.post("/login", async (req, res) => {
 
             
             const token = await user.getJWT()
-            res.cookie("token", token)
+            res.cookie("token", token , {expires: new Date(Date.now() + 24 * 60 * 60 * 1000)})
             res.send("User Login Successful")
         }
         else {
@@ -61,6 +61,21 @@ authRouter.post("/login", async (req, res) => {
     } catch (error) {
         console.error("Signup Error:", error); // <-- log the actual issue
         res.status(400).send("Error while Login the user");
+    }
+})
+
+authRouter.post("/logout",async(req,res)=>{
+    try {
+
+
+        res.cookie("token",null,{expires:new Date(Date.now())}) 
+        
+        res.send("Logout Successfully")
+        
+    } catch (error) {
+        console.error("Logout Error:", error); // <-- log the actual issue
+        res.status(400).send("Error while Logging out the user");
+        
     }
 })
 
