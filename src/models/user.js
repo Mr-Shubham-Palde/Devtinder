@@ -53,14 +53,18 @@ const userSchema = new mongoose.Schema({
     gender:
     {
         type: String,
+        enum:{
+            values:['male',"female","other"],
+            message:'{VALUE} is not valid gender type'
+        },
         // to check if the users gender is male femae or other
         //now listen than the validate will work only for new documents not in the case for the document that is present and we try to update it
-        validate(value) {
-            if (!["male", "female", "other"].includes(value)) {
-                throw new Error("Gender is not valid")
+        // validate(value) {
+        //     if (!["male", "female", "other"].includes(value)) {
+        //         throw new Error("Gender is not valid")
 
-            }
-        }
+        //     }
+        // }
 
     },
     photoUrl: {
